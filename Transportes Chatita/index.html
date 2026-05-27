@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Transportes Chatita | Grafos</title>
+
+  <link rel="icon" type="image/png" href="Img/favicon.png">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- LEAFLET -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet/dist/leaflet.css"
+/>
+
+</head>
+<body>
+
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+  <header>
+
+    <div class="header-contenido">
+
+      <div class="logo-grupo">
+        <div class="logo-icono">🚛</div>
+
+        <div class="logo-texto">
+          <h1>Transportes Chatita</h1>
+          <p>Sistema de Grafos — Guatemala</p>
+        </div>
+      </div>
+
+      <div class="bandera-gt">
+        <button
+  id="btnDark"
+  class="btn-dark"
+  onclick="toggleDarkMode()"
+>
+  🌙
+</button>
+
+
+        <span>🇬🇹</span>
+        <p>Guatemala</p>
+      </div>
+
+    </div>
+
+    <!-- NAV -->
+    <nav>
+
+      <button class="activo"
+              onclick="mostrarSeccion('inicio', this)">
+        Inicio
+      </button>
+
+      <button onclick="mostrarSeccion('ciudades', this)">
+        Ciudades
+      </button>
+
+      <button onclick="mostrarSeccion('conexiones', this)">
+        Conexiones
+      </button>
+
+      <button onclick="mostrarSeccion('algoritmos', this)">
+        Algoritmos
+      </button>
+
+      <button onclick="mostrarSeccion('visualizar', this)">
+        Visualización
+      </button>
+
+      <button onclick="mostrarSeccion('distancias', this)">
+        Distancias
+      </button>
+
+    </nav>
+
+  </header>
+
+  <!-- =========================================================
+       MAIN
+  ========================================================== -->
+  <main>
+
+    <!-- =====================================================
+         INICIO
+    ====================================================== -->
+    <section id="inicio" class="seccion activo">
+
+      <div class="grid-3">
+
+        <div class="stat-caja">
+          <div class="stat-icono">🏙️</div>
+
+          <div>
+            <div id="stat-ciudades" class="stat-valor">0</div>
+            <div class="stat-etiq">Ciudades</div>
+          </div>
+        </div>
+
+        <div class="stat-caja">
+          <div class="stat-icono">🛣️</div>
+
+          <div>
+            <div id="stat-conexiones" class="stat-valor">0</div>
+            <div class="stat-etiq">Conexiones</div>
+          </div>
+        </div>
+
+        <div class="stat-caja">
+          <div class="stat-icono">📏</div>
+
+          <div>
+            <div id="stat-km" class="stat-valor">0</div>
+            <div class="stat-etiq">Kilómetros</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PANEL -->
+      <div class="tarjeta">
+
+        <h2>
+          <span class="icono">📋</span>
+          Registro del Sistema
+        </h2>
+
+        <div id="log-inicio" class="resultado-panel">
+Sistema listo para trabajar...
+        </div>
+
+        <div class="btn-grupo" style="margin-top:15px;">
+
+          <button class="btn btn-exito"
+                  onclick="cargarDatosPrueba()">
+            🚀 Cargar Datos
+          </button>
+
+          <button class="btn btn-peligro"
+                  onclick="limpiarTodo()">
+            🗑️ Limpiar Grafo
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =====================================================
+         CIUDADES
+    ====================================================== -->
+    <section id="ciudades" class="seccion">
+
+      <div class="grid-2">
+
+        <!-- AGREGAR -->
+        <div class="tarjeta">
+
+          <h2>
+            <span class="icono">🏙️</span>
+            Registrar Ciudad
+          </h2>
+
+          <div id="alerta-ciudad"></div>
+
+          <div class="fila-form">
+
+            <div class="campo">
+              <label>Código</label>
+              <input type="text" id="cod-ciudad">
+            </div>
+
+            <div class="campo">
+              <label>Nombre</label>
+              <input type="text" id="nom-ciudad">
+            </div>
+
+          </div>
+
+          <div class="fila-form">
+
+            <div class="campo">
+              <label>Departamento</label>
+              <input type="text" id="dep-ciudad">
+            </div>
+
+            <div class="campo">
+              <label>Población</label>
+              <input type="number" id="pob-ciudad">
+            </div>
+
+          </div>
+
+          <button class="btn btn-primario"
+                  onclick="agregarCiudad()">
+            ➕ Agregar Ciudad
+          </button>
+
+        </div>
+
+        <!-- MODIFICAR -->
+        <div class="tarjeta">
+
+          <h2>
+            <span class="icono">✏️</span>
+            Modificar / Eliminar
+          </h2>
+
+          <div id="alerta-mod-ciudad"></div>
+
+          <div class="fila-form">
+
+            <div class="campo">
+              <label>Seleccionar Ciudad</label>
+
+              <select id="sel-mod-ciudad"
+                      onchange="cargarDatosModificar()">
+              </select>
+            </div>
+
+          </div>
+
+          <div class="fila-form">
+
+            <div class="campo">
+              <label>Nuevo Nombre</label>
+              <input type="text" id="mod-nom-ciudad">
+            </div>
+
+            <div class="campo">
+              <label>Nuevo Departamento</label>
+              <input type="text" id="mod-dep-ciudad">
+            </div>
+
+          </div>
+
+          <div class="fila-form">
+
+            <div class="campo">
+              <label>Nueva Población</label>
+              <input type="number" id="mod-pob-ciudad">
+            </div>
+
+          </div>
+
+          <div class="btn-grupo">
+
+            <button class="btn btn-advertencia"
+                    onclick="modificarCiudad()">
+              ✏️ Modificar
+            </button>
+
+            <button class="btn btn-peligro"
+                    onclick="eliminarCiudad()">
+              🗑️ Eliminar
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- TABLA -->
+      <div class="tarjeta">
+
+        <h2>
+          <span class="icono">📑</span>
+          Listado de Ciudades
+        </h2>
+
+        <div class="contenedor-tabla">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Código</th>
+                <th>Ciudad</th>
+                <th>Departamento</th>
+                <th>Población</th>
+                <th>Conexiones</th>
+              </tr>
+            </thead>
+
+            <tbody id="tbody-ciudades"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =====================================================
+         CONEXIONES
+    ====================================================== -->
+    <section id="conexiones" class="seccion">
+
+      <div class="grid-2">
+
+        <!-- CREAR -->
+        <div class="tarjeta">
+
+          <h2>
+            <span class="icono">🛣️</span>
+            Crear Conexión
+          </h2>
+
+          <div id="alerta-conexion"></div>
+
+          <div class="fila-form">
+
+            <div class="campo">
+              <label>Origen</label>
+              <select id="conn-origen"></select>
+            </div>
+
+            <div class="campo">
+              <label>Destino</label>
+              <select id="conn-destino"></select>
+            </div>
+
+          </div>
+
+          <div class="fila-form">
+
+            <div class="campo">
+              <label>Distancia KM</label>
+              <input type="number" id="conn-dist">
+            </div>
+
+            <div class="campo">
+              <label>Tipo de Vía</label>
+
+              <select id="conn-tipo">
+                <option value="pavimentada">Pavimentada</option>
+                <option value="autopista">Autopista</option>
+                <option value="terraceria">Terracería</option>
+              </select>
+
+            </div>
+
+          </div>
+
+          <button class="btn btn-exito"
+                  onclick="crearConexion()">
+            🔗 Crear Conexión
+          </button>
+
+        </div>
+
+        <!-- MODIFICAR -->
+        <div class="tarjeta">
+
+          <h2>
+            <span class="icono">⚙️</span>
+            Modificar Conexión
+          </h2>
+
+          <div id="alerta-mod-conn"></div>
+
+          <div class="fila-form">
+
+            <div class="campo">
+              <label>Conexión</label>
+
+              <select id="sel-mod-conn"
+                      onchange="cargarDatosModConn()">
+              </select>
+            </div>
+
+          </div>
+
+          <div class="fila-form">
+
+            <div class="campo">
+              <label>Nueva Distancia</label>
+              <input type="number" id="mod-conn-dist">
+            </div>
+
+            <div class="campo">
+              <label>Tipo</label>
+
+              <select id="mod-conn-tipo">
+                <option value="pavimentada">Pavimentada</option>
+                <option value="autopista">Autopista</option>
+                <option value="terraceria">Terracería</option>
+              </select>
+
+            </div>
+
+          </div>
+
+          <div class="btn-grupo">
+
+            <button class="btn btn-advertencia"
+                    onclick="modificarConexion()">
+              ✏️ Modificar
+            </button>
+
+            <button class="btn btn-peligro"
+                    onclick="eliminarConexion()">
+              🗑️ Eliminar
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- TABLA -->
+      <div class="tarjeta">
+
+        <h2>
+          <span class="icono">📌</span>
+          Conexiones Existentes
+        </h2>
+
+        <div class="contenedor-tabla">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Origen</th>
+                <th>Destino</th>
+                <th>Distancia</th>
+                <th>Tipo</th>
+              </tr>
+            </thead>
+
+            <tbody id="tbody-conexiones"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =====================================================
+         ALGORITMOS
+    ====================================================== -->
+    <section id="algoritmos" class="seccion">
+
+      <div class="grid-2">
+
+        <!-- BFS -->
+        <div class="tarjeta">
+
+          <h2>🌐 BFS</h2>
+
+          <div class="fila-form">
+
+            <div class="campo">
+              <label>Ciudad Inicio</label>
+              <select id="bfs-inicio"></select>
+            </div>
+
+          </div>
+
+          <button class="btn btn-info"
+                  onclick="ejecutarBFS()">
+            ▶ Ejecutar BFS
+          </button>
+
+          <br><br>
+
+          <div id="resultado-bfs"
+               class="resultado-panel"></div>
+
+        </div>
+
+        <!-- DFS -->
+        <div class="tarjeta">
+
+          <h2>🧭 DFS</h2>
+
+          <div class="fila-form">
+
+            <div class="campo">
+              <label>Ciudad Inicio</label>
+              <select id="dfs-inicio"></select>
+            </div>
+
+          </div>
+
+          <button class="btn btn-info"
+                  onclick="ejecutarDFS()">
+            ▶ Ejecutar DFS
+          </button>
+
+          <br><br>
+
+          <div id="resultado-dfs"
+               class="resultado-panel"></div>
+
+        </div>
+
+      </div>
+
+      <!-- DIJKSTRA -->
+      <div class="tarjeta">
+
+        <h2>🏆 Ruta Más Corta — Dijkstra</h2>
+
+        <div class="fila-form">
+
+          <div class="campo">
+            <label>Origen</label>
+            <select id="dijk-origen"></select>
+          </div>
+
+          <div class="campo">
+            <label>Destino</label>
+            <select id="dijk-destino"></select>
+          </div>
+
+        </div>
+
+        <button class="btn btn-exito"
+                onclick="ejecutarDijkstra()">
+          🚀 Calcular Ruta
+        </button>
+
+        <br><br>
+
+        <div class="grid-2">
+
+          <div id="resultado-dijkstra"
+               class="resultado-panel"></div>
+
+          <div class="tarjeta">
+            <h2>📍 Detalle de Ruta</h2>
+            <div id="detalle-ruta"></div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =====================================================
+         VISUALIZACIÓN
+    ====================================================== -->
+    <section id="visualizar" class="seccion">
+
+      <div class="tarjeta">
+
+        <h2>
+          <span class="icono">🗺️</span>
+          Visualización del Grafo
+        </h2>
+
+        <div class="contenedor-canvas">
+
+          <canvas id="canvasGrafo"></canvas>
+
+          <!-- BOTONES -->
+          <div class="controles-canvas">
+
+            <button class="btn-canvas"
+                    onclick="zoom(1.15)">
+              +
+            </button>
+
+            <button class="btn-canvas"
+                    onclick="zoom(0.85)">
+              −
+            </button>
+
+            <button class="btn-canvas"
+                    onclick="resetVista()">
+              ⟳
+            </button>
+
+            <button class="btn-canvas"
+                    onclick="redistribuirNodos()">
+              ⊚
+            </button>
+
+            <button class="btn-canvas"
+                    onclick="limpiarResaltado()">
+              ✖
+            </button>
+
+          </div>
+
+          <!-- LEYENDA -->
+          <div class="leyenda-canvas">
+
+            <div class="leyenda-item">
+              <span class="punto-leyenda"
+                    style="background:#1e8449;"></span>
+              Normal
+            </div>
+
+            <div class="leyenda-item">
+              <span class="punto-leyenda"
+                    style="background:#7d3c98;"></span>
+              BFS / DFS
+            </div>
+
+            <div class="leyenda-item">
+              <span class="punto-leyenda"
+                    style="background:#c0392b;"></span>
+              Ruta Dijkstra
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =====================================================
+         DISTANCIAS
+    ====================================================== -->
+<section id="distancias" class="seccion">
+
+  <div class="tarjeta">
+
+    <h2>
+      <span class="icono">📍</span>
+      Distancia Real Entre Ciudades
+    </h2>
+
+    <div class="fila-form">
+
+      <div class="campo">
+
+        <label>Ciudad Origen</label>
+
+        <input
+          type="text"
+          id="ciudadOrigen"
+          placeholder="Ej: Guatemala"
+        >
+
+      </div>
+
+      <div class="campo">
+
+        <label>Ciudad Destino</label>
+
+        <input
+          type="text"
+          id="ciudadDestino"
+          placeholder="Ej: Quetzaltenango"
+        >
+
+      </div>
+
+      <button
+        class="btn btn-primario"
+        onclick="calcularRutaReal()"
+      >
+        🚛 Calcular Ruta
+      </button>
+
+    </div>
+
+    <div
+      id="panelUbicacion"
+      class="resultado-panel"
+    >
+      Esperando cálculo...
+    </div>
+
+  </div>
+
+  <div class="tarjeta">
+
+    <h2>🗺️ Mapa</h2>
+
+    <div
+      id="mapaDistancias"
+      style="height: 500px; border-radius: 10px;"
+    ></div>
+
+  </div>
+
+    </section>
+
+  </main>
+
+  <!-- TOOLTIP -->
+  <div id="tooltip" class="tooltip"></div>
+
+  <!-- MODAL -->
+  <div id="modal-fondo" class="modal-fondo">
+
+    <div class="modal-contenido">
+
+      <div class="modal-titulo">
+        Información
+      </div>
+
+      <button class="btn btn-peligro"
+              onclick="cerrarModal()">
+        Cerrar
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    Sistema de Grafos —
+    <strong>Transportes Chatita</strong>
+    | Guatemala 2026
+  </footer>
+
+  <!-- JAVASCRIPT -->
+  <script src="js/main.js"></script>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="js/mapa.js"></script>
+
+</body>
+</html>
